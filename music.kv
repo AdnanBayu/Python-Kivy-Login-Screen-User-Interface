@@ -1,0 +1,150 @@
+#: kivy 1.11
+#: import ew kivy.uix.effectwidget
+
+#set class FirstScreen and SecondScreen inside the class WindowManager
+WindowManager:
+    FirstScreen:
+    SecondScreen:
+
+#set the program for the first window
+<FirstScreen>:
+    #assign the first screen as "first"
+    name: "first"
+
+    #configure the first window background wallpaper
+    EffectWidget:
+        effects: [ew.VerticalBlurEffect(size=10), ew.HorizontalBlurEffect(size=10)]
+        Image:
+            source: 'image.jpg'                         #image source for the background wallpaper (the image must be in the same folder with all the program file)
+
+    #main grid to make every component easier to organize
+    GridLayout: 
+        cols: 1
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    
+        Label: 
+            text: ""
+            size_hint: (0.2, 0.2)
+
+        #grid for the app logo and some text
+        GridLayout: 
+            cols: 1                                     #set the column 1
+            size_hint: (0.5, 0.5)
+            Image: 
+                source: 'bumi.png'                      #app logo in the first window
+                image_size: 40
+            Label:
+                text: 'Music Player'                    #text in the first window
+                font_size: '35sp'
+                bold: True
+            Label:
+                text: 'Login First!'                    #text in the first window
+                font_size: '20sp'
+
+        #grid for password
+        GridLayout:
+            cols: 2                                     #set the column 2
+            size_hint: (0.07, 0.07)
+            pos_hint: {"center_x": 0.5, "center_y":0.5}
+            Label: 
+                text: 'Password'                        #"password" text in the left side
+                font_size: '13sp'
+
+            TextInput:                                  #input password widget
+                id: passw                               #assign user input password as passw
+                multiline: False
+                password: True
+                font_size: '10sp'
+
+        #add button widget and configure it
+        Button:
+            text: 'Submit'                              #set the text inside button                    
+            font_size: '10sp'
+            size_hint: (0.05, 0.05)
+            bold: True
+            background_color: '#40E0D0'                 #set the button color using hex code
+            background_normal: ""                       #using this the color will be brighter
+            #set what will happen when the button is pressed
+            on_release:                                 
+                #if the button pressed and the password is correct, the screen will move to the second window
+                #if the password incorrect the screen will remain in the first window
+                app.root.current = "second" if passw.text == 'bayu' else 'first'
+                #set the screen transition direction
+                root.manager.transition.direction = 'left'
+        
+        Label: 
+            text: ""
+            size_hint: (0.1, 0.1)
+
+#set the program for the second window
+<SecondScreen>:
+    #assign the second screen as "second"
+    name: "second"
+
+    #configure the first window background wallpaper
+    EffectWidget:
+        effects: [ew.VerticalBlurEffect(size=10), ew.HorizontalBlurEffect(size=10)]
+        Image: 
+            source: 'image.jpg'                                 #image source for the second screen background
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: ['10dp', '30dp', '10dp', '50dp']
+        SongCover:
+            id: sc
+            size: (250, 250)
+            size_hint: None, None
+            pos_hint: {'center_x': .5}
+            RotatingImage:
+                angle: sc.angle
+                source: 'image.jpg'
+                radius: [250, ]
+        Widget:
+            size_hint: None, None
+            height: '10dp'
+        Label:
+            text: "Lorem Ipsum"
+            bold: True
+            font_size: '25sp'
+            size_hint_y: None
+            height: self.texture_size[1]
+        Label:
+            text: "lorem ipsum"
+            size_hint_y: None
+            height: self.texture_size[1]    
+        MDBoxLayout: 
+            orientation: 'vertical'
+            Slider: 
+                id: progress
+                color: [.7, 0, 0, 1]
+                min: 0
+                max: 100
+                value: 0
+                background_width: '15dp'
+                current_image:""
+                cursor_size: ('12dp','12dp')
+                value_track_color: [175, 238, 239, .8]
+                value_track: True
+
+    Button:
+        text: 'Back'
+        pos_hint: {'center_x': 0.12, 'center_y':0.03}
+        bold: True
+        font_size: '10sp'
+        size_hint: (0.2, 0.03)
+        background_color: '#40E0D0'
+        background_normal: ""
+        on_release:
+            app.root.current = 'first'
+            root.manager.transition.direction = 'right'
+
+<RotatingImage@FitImage>:
+    angle: 0
+    canvas.before:
+        PushMatrix
+        Rotate:
+            angle: root.angle
+            origin: self.center
+    canvas.after:
+        PopMatrix
